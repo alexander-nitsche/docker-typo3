@@ -1,0 +1,40 @@
+#!/bin/sh
+set -eo pipefail
+
+docker_setup_env() {
+    export TYPO3_DIR="/var/www/html"
+    export TYPO3_ALREADY_EXISTS
+    if [ -f "$TYPO3_DIR/composer.json" ]; then
+        TYPO3_ALREADY_EXISTS=true
+    fi
+}
+
+typo3_install() {
+    echo "Creating TYPO3 v9 project in composer mode"
+    local user; user="$(id -u)"
+
+    if [ "$user" = "0" ]; then
+		chown www-data:www-data "$TYPO3_DIR"
+	fi
+
+    composer create-project typo3/cms-base-distribution $TYPO3_DIR ^9
+
+    chmod 2770 "$TYPO3_DIR/public"
+    touch "$TYPO3_DIR/public/FIRST_INSTALL"
+
+    if [ "$user" = "0" ]; then
+		find "$TYPO3_DIR/public" \! -user www-data -exec chown www-data:www-data '{}' +
+	fi
+}
+
+_main() {
+    docker_setup_env
+
+    if [ -z "$TYPO3_ALREADY_EXISTS" ]; then
+        typo3_install
+    fi
+}
+
+_main
+
+. docker-php-entrypoint
