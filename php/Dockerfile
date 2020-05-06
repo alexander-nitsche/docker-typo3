@@ -3,6 +3,7 @@ FROM php:7.3-fpm-alpine
 RUN set -ex pipefail \
     && apk add --no-cache \
         git \
+        ghostscript \
     && apk add --no-cache --virtual .user-deps \
         shadow \
     && usermod -u 1000 www-data \
@@ -15,7 +16,7 @@ RUN chmod uga+x /usr/local/bin/install-php-extensions && sync && install-php-ext
         mysqli \
         zip \
         intl \
-        imagick
+        gmagick
 
 RUN curl -sS https://getcomposer.org/installer \
     | php -- --install-dir=/usr/bin --filename=composer
