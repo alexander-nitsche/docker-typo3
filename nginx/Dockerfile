@@ -7,6 +7,10 @@ RUN set -ex pipefail \
     && groupmod -g 1000 nginx \
     && apk del --no-cache .user-deps
 
+WORKDIR /etc/nginx
+COPY nginx.conf nginx.conf
+COPY conf.d/default.conf conf.d/default.conf
+
 WORKDIR /var/www/html
 RUN chown nginx:nginx /var/www/html
 VOLUME [ "/var/www/html" ]
