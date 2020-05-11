@@ -10,6 +10,7 @@ RUN set -ex pipefail \
 WORKDIR /etc/nginx
 COPY nginx.conf nginx.conf
 COPY conf.d/default.conf conf.d/default.conf
+COPY static /usr/share/nginx/html/static
 
 WORKDIR /var/www/html
 RUN chown nginx:nginx /var/www/html
