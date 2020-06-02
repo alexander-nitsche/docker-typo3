@@ -1,3 +1,14 @@
+## Debugging Nginx
+In order to enable logging at debug level you will have to add the following line to the end of the
+Nginx [Dockerfile](nginx/Dockerfile)
+```bash
+CMD ["nginx-debug", "-g", "daemon off;"]
+```
+and adapt the Nginx [configuration](nginx/nginx.conf)
+```bash
+error_log /var/log/nginx/error.log debug;
+```
+
 ## TODOS
 
 - how to own /var/www/html with the correct user "www-data" and run the container with www-data
