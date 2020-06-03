@@ -1,6 +1,9 @@
 FROM nginx:1.16-alpine
 
 RUN set -ex pipefail \
+    && apk add --no-cache \
+        bash \
+        bash-completion \
     && apk add --no-cache --virtual .user-deps \
         shadow \
     && usermod -u 1000 nginx \
@@ -12,6 +15,7 @@ COPY nginx.conf nginx.conf
 COPY mime.types mime.types
 COPY conf.d/default.conf conf.d/default.conf
 COPY static /usr/share/nginx/html/static
+COPY .bashrc /root/.bashrc
 
 WORKDIR /var/www/html
 RUN chown nginx:nginx /var/www/html

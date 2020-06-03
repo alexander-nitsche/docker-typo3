@@ -4,6 +4,8 @@ RUN set -ex pipefail \
     && apk add --no-cache \
         git \
         ghostscript \
+        bash \
+        bash-completion \
     && apk add --no-cache --virtual .user-deps \
         shadow \
     && usermod -u 1000 www-data \
@@ -24,6 +26,7 @@ RUN curl -sS https://getcomposer.org/installer \
 WORKDIR /usr/local/etc/php
 RUN cp php.ini-development php.ini
 COPY conf.d/default.ini conf.d/default.ini
+COPY .bashrc /home/www-data/.bashrc
 
 COPY docker-typo3-entrypoint /usr/local/bin/
 RUN chmod uga+x /usr/local/bin/docker-typo3-entrypoint
