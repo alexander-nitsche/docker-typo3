@@ -25,8 +25,7 @@ RUN curl -sS https://getcomposer.org/installer \
 
 WORKDIR /usr/local/etc/php
 RUN cp php.ini-development php.ini
-COPY conf.d/default.ini conf.d/default.ini
-COPY .bashrc /home/www-data/.bashrc
+COPY /files /
 
 COPY docker-typo3-entrypoint /usr/local/bin/
 RUN chmod uga+x /usr/local/bin/docker-typo3-entrypoint

@@ -10,12 +10,7 @@ RUN set -ex pipefail \
     && groupmod -g 1000 nginx \
     && apk del --no-cache .user-deps
 
-WORKDIR /etc/nginx
-COPY nginx.conf nginx.conf
-COPY mime.types mime.types
-COPY conf.d/default.conf conf.d/default.conf
-COPY static /usr/share/nginx/html/static
-COPY .bashrc /root/.bashrc
+COPY /files /
 
 WORKDIR /var/www/html
 RUN chown nginx:nginx /var/www/html
