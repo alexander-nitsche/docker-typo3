@@ -1,0 +1,20 @@
+#!/bin/sh
+set -eo pipefail
+
+docker_resolve_env() {
+    local config_dir="/etc/nginx"
+    local suffix=".conf"
+    local config
+
+    find "$config_dir" -follow -type f -name "*$suffix" -print | while read -r config_file; do
+        config=$(cat "$config_file")
+        if [[ -n "${NGINX_LOGLEVEL}" ]]; then
+            config=$(echo "$config" | sed -e "/error_log/s/[a-z]\+;$/${NGINX_LOGLEVEL};/g")
+        fi
+        echo "$config" > "$config_file"
+    done
+}
+
+docker_resolve_env
+
+exec "$@"

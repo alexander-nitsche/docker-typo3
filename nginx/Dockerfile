@@ -12,6 +12,9 @@ RUN set -ex pipefail \
 
 COPY /files /
 
+RUN chmod uga+x /usr/local/bin/docker-nginx-entrypoint
+ENTRYPOINT [ "docker-nginx-entrypoint" ]
+
 WORKDIR /var/www/html
 RUN chown nginx:nginx /var/www/html
 VOLUME [ "/var/www/html" ]
