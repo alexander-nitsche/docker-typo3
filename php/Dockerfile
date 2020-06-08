@@ -27,7 +27,6 @@ WORKDIR /usr/local/etc/php
 RUN cp php.ini-development php.ini
 COPY /files /
 
-COPY docker-typo3-entrypoint /usr/local/bin/
 RUN chmod uga+x /usr/local/bin/docker-typo3-entrypoint
 ENTRYPOINT [ "docker-typo3-entrypoint" ]
 
