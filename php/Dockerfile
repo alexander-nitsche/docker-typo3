@@ -18,7 +18,8 @@ RUN chmod uga+x /usr/local/bin/install-php-extensions && sync && install-php-ext
         mysqli \
         zip \
         intl \
-        gmagick
+        gmagick \
+        xdebug
 
 RUN curl -sS https://getcomposer.org/installer \
     | php -- --install-dir=/usr/bin --filename=composer
