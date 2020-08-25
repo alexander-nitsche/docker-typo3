@@ -31,7 +31,8 @@ COPY /files /
 RUN chmod uga+x /usr/local/bin/docker-typo3-entrypoint
 ENTRYPOINT [ "docker-typo3-entrypoint" ]
 
-RUN chown www-data:www-data /var/www/html \
+RUN chown -R www-data:www-data /home/www-data \
+    && chown www-data:www-data /var/www/html \
     && sed -i /usr/local/etc/php-fpm.d/www.conf \
            -e 's/^user =.*$/;&/' \
            -e 's/^group =.*$/;&/'
