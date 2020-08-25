@@ -6,13 +6,23 @@ docker_resolve_env() {
     local suffix=".conf"
     local config
 
+    local DOCKER_GATEWAY=$(docker_resolve_network_gateway)
+
     find "$config_dir" -follow -type f -name "*$suffix" -print | while read -r config_file; do
         config=$(cat "$config_file")
         if [[ -n "${NGINX_LOGLEVEL}" ]]; then
             config=$(echo "$config" | sed -e "/error_log/s/[a-z]\+;$/${NGINX_LOGLEVEL};/g")
         fi
+        if [[ -n "${DOCKER_GATEWAY}" ]]; then
+            config=$(echo "$config" | sed -e "s/127\.0\.0\.1;$/${DOCKER_GATEWAY};/g")
+        fi
         echo "$config" > "$config_file"
     done
+}
+
+docker_resolve_network_gateway() {
+    local gateway=$(ip route | sed -n -e "s/^default via \(\S*\).*$/\1/p")
+    echo "${gateway}"
 }
 
 docker_resolve_env

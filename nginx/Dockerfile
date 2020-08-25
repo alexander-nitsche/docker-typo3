@@ -1,4 +1,4 @@
-FROM nginx:1.18-alpine
+FROM nginx:1.18-alpine-perl
 
 RUN set -ex pipefail \
     && apk add --no-cache \
