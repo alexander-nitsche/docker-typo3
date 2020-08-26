@@ -1,11 +1,16 @@
 FROM php:7.3-fpm-alpine
 
+# Make locales available to non-login shell
+ENV MUSL_LOCPATH="/usr/share/i18n/locales/musl"
+
 RUN set -ex pipefail \
     && apk add --no-cache \
         git \
         ghostscript \
         bash \
         bash-completion \
+        musl-locales \
+        musl-locales-lang \
     && apk add --no-cache --virtual .user-deps \
         shadow \
     && usermod -u 1000 www-data \
