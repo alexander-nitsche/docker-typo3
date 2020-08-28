@@ -1,0 +1,17 @@
+version: '3'
+services:
+
+  run-typo3-unit-tests:
+    image: typo3/php
+    volumes:
+      - ./php/files/usr/local/etc/php-fpm.d/default.conf:/usr/local/etc/php-fpm.d/default.conf
+      - ./php/files/usr/local/etc/php/conf.d/default.ini:/usr/local/etc/php/conf.d/default.ini
+      - ./typo3:/var/www/html
+    command: >
+      /bin/sh -c "
+        if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
+          set -x
+        fi
+        php -d memory_limit=768M vendor/phpunit/phpunit/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/UnitTests.xml
+      "
+
