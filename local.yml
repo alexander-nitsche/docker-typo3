@@ -25,6 +25,7 @@ services:
       - ./typo3:/var/www/html
 #      - vendor:/var/www/html/vendor
     environment:
+      PHP_LOGLEVEL: notice
       TYPO3_INSTALL_DB_DRIVER: mysqli
       TYPO3_INSTALL_DB_HOST: mariadb
       TYPO3_INSTALL_DB_USER: typo3

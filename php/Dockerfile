@@ -1,5 +1,9 @@
 FROM php:7.3-fpm-alpine
 
+# Available levels: alert, error, warning, notice, debug
+# @see https://www.php.net/manual/en/install.fpm.configuration.php
+ENV PHP_LOGLEVEL="warning"
+
 # Make locales available to non-login shell
 ENV MUSL_LOCPATH="/usr/share/i18n/locales/musl"
 
