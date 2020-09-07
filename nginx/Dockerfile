@@ -1,5 +1,8 @@
 FROM nginx:1.18-alpine-perl
 
+# Available contexts: dev, test, prod
+ENV NGINX_CONTEXT="prod"
+
 RUN set -ex pipefail \
     && apk add --no-cache \
         bash \
