@@ -21,3 +21,5 @@ ENTRYPOINT [ "docker-nginx-entrypoint" ]
 WORKDIR /var/www/html
 RUN chown nginx:nginx /var/www/html
 VOLUME [ "/var/www/html" ]
+
+CMD ["nginx", "-g", "daemon off;"]
