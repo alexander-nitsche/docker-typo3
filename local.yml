@@ -11,7 +11,9 @@ services:
       NGINX_CONTEXT: dev
       # Available levels: debug, info, notice, warn, error, crit, alert, emerg
       # @see https://nginx.org/en/docs/ngx_core_module.html#error_log
-      # NGINX_LOGLEVEL: notice
+      # NGINX_LOGLEVEL: debug
+    # Commandline below is required for Nginx log level "debug"
+    # command: [ "nginx-debug", "-g", "daemon off;" ]
   php:
     image: typo3/php
     build: ./php

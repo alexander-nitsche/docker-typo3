@@ -1,12 +1,9 @@
 ## Debugging Nginx
-In order to enable logging at debug level you will have to add the following line to the end of the
-Nginx [Dockerfile](nginx/Dockerfile)
-```bash
-CMD ["nginx-debug", "-g", "daemon off;"]
-```
-and adapt the Nginx [configuration](nginx/nginx.conf)
-```bash
-error_log /var/log/nginx/error.log debug;
+In order to enable logging at debug level you will have to uncomment the following
+lines at the Docker Compose file, e.g. [local.yml](local.yml)
+```yaml
+# NGINX_LOGLEVEL: debug
+# command: [ "nginx-debug", "-g", "daemon off;" ]
 ```
 
 ## Debugging PHP
