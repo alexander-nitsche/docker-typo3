@@ -14,7 +14,7 @@ docker_resolve_env() {
         echo "Environment variable NGINX_CONTEXT has invalid value '${NGINX_CONTEXT}'. Reset to 'prod'."
         export NGINX_CONTEXT="prod"
     fi
-    cp "$config_dir/nginx-${NGINX_CONTEXT}.conf" "$config_dir/nginx.conf"
+    cp "$config_dir/conf-available.d/nginx-${NGINX_CONTEXT}.conf" "$config_dir/nginx.conf"
     cp "$config_dir/conf-available.d/default-${NGINX_CONTEXT}.conf" "$config_dir/conf.d/default.conf"
 
     # Nginx: Variable substitutions in configuration
