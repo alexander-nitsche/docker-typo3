@@ -1,6 +1,37 @@
 version: '3'
 services:
 
+  nginx:
+    image: typo3/nginx
+    depends_on:
+      - php
+    ports:
+      - "80:80"
+    volumes:
+      - ./typo3:/var/www/html
+    environment:
+      NGINX_CONTEXT: test
+      # Available levels: debug, info, notice, warn, error, crit, alert, emerg
+      # @see https://nginx.org/en/docs/ngx_core_module.html#error_log
+      # NGINX_LOGLEVEL: debug
+    networks:
+      - tests
+    # Commandline below is required for Nginx log level "debug"
+    # command: [ "nginx-debug", "-g", "daemon off;" ]
+
+  php:
+    image: typo3/php
+    volumes:
+      - ./typo3:/var/www/html
+    environment:
+      PHP_LOGLEVEL: notice
+      typo3DatabaseHost: mariadb
+      typo3DatabaseUsername: root
+      typo3DatabasePassword: geheim
+      typo3DatabaseName: typo3_test
+    networks:
+      - tests
+
   mariadb:
     image: typo3/mariadb
     volumes:
@@ -8,10 +39,14 @@ services:
       - db-test:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: geheim
-      MYSQL_DATABASE: typo3
-      MYSQL_USER: typo3
-      MYSQL_PASSWORD: typo3
     command: [ "mysqld", "--character-set-server", "utf8mb4", "--collation-server", "utf8mb4_unicode_ci" ]
+    networks:
+      - tests
+
+  chrome:
+    image: selenium/standalone-chrome:3.12
+    networks:
+      - tests
 
   run-typo3-unit-tests:
     image: typo3/php
@@ -26,6 +61,8 @@ services:
         fi
         php -d memory_limit=768M vendor/phpunit/phpunit/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/UnitTests.xml
       "
+    networks:
+      - tests
 
   run-typo3-functional-tests:
     image: typo3/php
@@ -37,9 +74,9 @@ services:
       - ./typo3:/var/www/html
     environment:
       typo3DatabaseHost: mariadb
-      typo3DatabaseUsername: typo3
-      typo3DatabasePassword: typo3
-      typo3DatabaseName: typo3
+      typo3DatabaseUsername: root
+      typo3DatabasePassword: geheim
+      typo3DatabaseName: typo3_test
       # Set fake HTTP_HOST as DBAL + MariaDB 10.4 throws an exception (MariaDB 10.3 works fine though),
       # if HTTP_HOST is null in the backend user authentication
       # @see typo3/typo3/sysext/core/Classes/Authentication/BackendUserAuthentication.php::fetchGroups()
@@ -56,6 +93,45 @@ services:
         echo Database is up;
         php -d memory_limit=4048M vendor/phpunit/phpunit/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTests.xml
       "
+    networks:
+      - tests
+
+  run-typo3-acceptance-tests:
+    image: typo3/php
+    depends_on:
+      - nginx
+      - mariadb
+      - chrome
+    volumes:
+      - ./typo3:/var/www/html
+    environment:
+      typo3DatabaseHost: mariadb
+      typo3DatabaseUsername: root
+      typo3DatabasePassword: geheim
+      typo3DatabaseName: typo3_test
+      typo3TestingAcceptanceBaseUrl: http://nginx:80
+    command: >
+      /bin/sh -c "
+        if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
+          set -x
+        fi
+        echo Waiting for nginx start...;
+        while ! nc -z nginx 80; do
+          sleep 1;
+        done;
+        echo Nginx is up;
+        echo Waiting for database start...;
+        while ! nc -z mariadb 3306; do
+          sleep 1;
+        done;
+        echo Database is up;
+        ./bin/codecept run Backend -d -c typo3/sysext/core/Tests/codeception.yml --html reports.html
+      "
+    networks:
+      - tests
 
 volumes:
   db-test:
+
+networks:
+  tests:
