@@ -1,38 +1,39 @@
 #!/bin/sh
 set -eo pipefail
 
-docker_setup_env() {
-    export TYPO3_DIR="/var/www/html"
-    export TYPO3_ALREADY_EXISTS
-    if [ -f "$TYPO3_DIR/composer.json" ]; then
-        TYPO3_ALREADY_EXISTS=true
+docker_resolve_env() {
+    local config_php_dir="/usr/local/etc/php"
+    local config_phpfpm_dir="/usr/local/etc/php-fpm.d"
+    local config_tmpl_dir="/usr/local/etc/php/conf-available.d"
+    local suffix_php=".ini"
+    local suffix_phpfpm=".conf"
+    local config
+
+    # PHP: Context sensitive configuration
+    if [ "${PHP_CONTEXT}" != "dev" ] && [ "${PHP_CONTEXT}" != "test" ] && [ "${PHP_CONTEXT}" != "prod" ]; then
+        echo "Environment variable PHP_CONTEXT has invalid value '${PHP_CONTEXT}'. Reset to 'prod'."
+        export PHP_CONTEXT="prod"
     fi
-}
+    if [ "${PHP_CONTEXT}" = "prod" ]; then
+        cp "$config_php_dir/php.ini-production" "$config_php_dir/php.ini"
+    else
+        cp "$config_php_dir/php.ini-development" "$config_php_dir/php.ini"
+    fi
+    cp "$config_tmpl_dir/default-${PHP_CONTEXT}.ini" "$config_php_dir/conf.d/default.ini"
+    cp "$config_tmpl_dir/default-${PHP_CONTEXT}.conf" "$config_phpfpm_dir/default.conf"
 
-typo3_install() {
-    echo "Creating TYPO3 v9 project in composer mode"
-    local user; user="$(id -u)"
-
-    if [ "$user" = "0" ]; then
-		chown www-data:www-data "$TYPO3_DIR"
-	fi
-
-    composer create-project typo3/cms-base-distribution $TYPO3_DIR ^9
-
-    chmod 2770 "$TYPO3_DIR/public"
-    touch "$TYPO3_DIR/public/FIRST_INSTALL"
-
-    if [ "$user" = "0" ]; then
-		find "$TYPO3_DIR/public" \! -user www-data -exec chown www-data:www-data '{}' +
-	fi
+    # PHP: Variable substitutions in configuration
+    find "$config_phpfpm_dir" -follow -type f -name "*$suffix_phpfpm" -print | while read -r config_file; do
+        config=$(cat "$config_file")
+        if [[ -n "${PHP_LOGLEVEL}" ]]; then
+            config=$(echo "$config" | sed -e "/log_level/s/[a-z]\+$/${PHP_LOGLEVEL}/g")
+        fi
+        echo "$config" > "$config_file"
+    done
 }
 
 _main() {
-    docker_setup_env
-
-    if [ -z "$TYPO3_ALREADY_EXISTS" ]; then
-        typo3_install
-    fi
+    docker_resolve_env
 }
 
 _main
