@@ -1,5 +1,6 @@
 version: '3'
 services:
+
   nginx:
     image: typo3/nginx
     build: ./nginx
@@ -14,18 +15,22 @@ services:
       # NGINX_LOGLEVEL: debug
     # Commandline below is required for Nginx log level "debug"
     # command: [ "nginx-debug", "-g", "daemon off;" ]
+
   php:
     image: typo3/php
     build: ./php
     expose:
       - "9000"
     volumes:
-      - ./php/files/usr/local/etc/php-fpm.d/default.conf:/usr/local/etc/php-fpm.d/default.conf
-      - ./php/files/usr/local/etc/php/conf.d/default.ini:/usr/local/etc/php/conf.d/default.ini
+      - ./php/files/usr/local/etc/php/conf-available.d/default-dev.conf:/usr/local/etc/php/conf-available.d/default-dev.conf
+      - ./php/files/usr/local/etc/php/conf-available.d/default-dev.ini:/usr/local/etc/php/conf-available.d/default-dev.ini
       - ./typo3:/var/www/html
 #      - vendor:/var/www/html/vendor
     environment:
-      PHP_LOGLEVEL: notice
+      PHP_CONTEXT: dev
+      # Available levels: alert, error, warning, notice, debug
+      # @see https://www.php.net/manual/en/install.fpm.configuration.php
+      # PHP_LOGLEVEL: debug
       TYPO3_INSTALL_DB_DRIVER: mysqli
       TYPO3_INSTALL_DB_HOST: mariadb
       TYPO3_INSTALL_DB_USER: typo3
@@ -33,6 +38,7 @@ services:
       TYPO3_INSTALL_DB_DBNAME: typo3
       TYPO3_INSTALL_DB_PORT: 3306
       TYPO3_CONTEXT: "Development"
+
   mariadb:
     image: typo3/mariadb
     build: ./mariadb
@@ -47,6 +53,7 @@ services:
       MYSQL_USER: typo3
       MYSQL_PASSWORD: typo3
     command: [ "mysqld", "--character-set-server", "utf8mb4", "--collation-server", "utf8mb4_unicode_ci" ]
+
 volumes:
 #  vendor:
   db:

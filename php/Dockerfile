@@ -1,8 +1,7 @@
 FROM php:7.3-fpm-alpine
 
-# Available levels: alert, error, warning, notice, debug
-# @see https://www.php.net/manual/en/install.fpm.configuration.php
-ENV PHP_LOGLEVEL="warning"
+# Available contexts: dev, test, prod
+ENV PHP_CONTEXT="prod"
 
 # Make locales available to non-login shell
 ENV MUSL_LOCPATH="/usr/share/i18n/locales/musl"
@@ -34,7 +33,6 @@ RUN curl -sS https://getcomposer.org/installer \
     | php -- --install-dir=/usr/bin --filename=composer
 
 WORKDIR /usr/local/etc/php
-RUN cp php.ini-development php.ini
 COPY /files /
 
 RUN chmod uga+x /usr/local/bin/docker-typo3-entrypoint
@@ -42,6 +40,11 @@ ENTRYPOINT [ "docker-typo3-entrypoint" ]
 
 RUN chown -R www-data:www-data /home/www-data \
     && chown www-data:www-data /var/www/html \
+    # Enable overwriting configuration by user "www-data"
+    && chown -R :www-data /usr/local/etc/php-fpm.d \
+    && chmod -R g+w /usr/local/etc/php-fpm.d \
+    && chown -R :www-data /usr/local/etc/php \
+    && chmod -R g+w /usr/local/etc/php \
     && sed -i /usr/local/etc/php-fpm.d/www.conf \
            -e 's/^user =.*$/;&/' \
            -e 's/^group =.*$/;&/'

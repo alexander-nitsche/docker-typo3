@@ -22,9 +22,14 @@ services:
   php:
     image: typo3/php
     volumes:
+      - ./php/files/usr/local/etc/php/conf-available.d/default-test.conf:/usr/local/etc/php/conf-available.d/default-test.conf
+      - ./php/files/usr/local/etc/php/conf-available.d/default-test.ini:/usr/local/etc/php/conf-available.d/default-test.ini
       - ./typo3:/var/www/html
     environment:
-      PHP_LOGLEVEL: notice
+      PHP_CONTEXT: test
+      # Available levels: alert, error, warning, notice, debug
+      # @see https://www.php.net/manual/en/install.fpm.configuration.php
+      # PHP_LOGLEVEL: debug
       typo3DatabaseHost: mariadb
       typo3DatabaseUsername: root
       typo3DatabasePassword: geheim
@@ -51,8 +56,8 @@ services:
   run-typo3-unit-tests:
     image: typo3/php
     volumes:
-      - ./php/files/usr/local/etc/php-fpm.d/default.conf:/usr/local/etc/php-fpm.d/default.conf
-      - ./php/files/usr/local/etc/php/conf.d/default.ini:/usr/local/etc/php/conf.d/default.ini
+      - ./php/files/usr/local/etc/php/conf-available.d/default-test.conf:/usr/local/etc/php/conf-available.d/default-test.conf
+      - ./php/files/usr/local/etc/php/conf-available.d/default-test.ini:/usr/local/etc/php/conf-available.d/default-test.ini
       - ./typo3:/var/www/html
     command: >
       /bin/sh -c "
@@ -69,8 +74,8 @@ services:
     depends_on:
       - mariadb
     volumes:
-      - ./php/files/usr/local/etc/php-fpm.d/default.conf:/usr/local/etc/php-fpm.d/default.conf
-      - ./php/files/usr/local/etc/php/conf.d/default.ini:/usr/local/etc/php/conf.d/default.ini
+      - ./php/files/usr/local/etc/php/conf-available.d/default-test.conf:/usr/local/etc/php/conf-available.d/default-test.conf
+      - ./php/files/usr/local/etc/php/conf-available.d/default-test.ini:/usr/local/etc/php/conf-available.d/default-test.ini
       - ./typo3:/var/www/html
     environment:
       typo3DatabaseHost: mariadb
@@ -103,6 +108,8 @@ services:
       - mariadb
       - chrome
     volumes:
+      - ./php/files/usr/local/etc/php/conf-available.d/default-test.conf:/usr/local/etc/php/conf-available.d/default-test.conf
+      - ./php/files/usr/local/etc/php/conf-available.d/default-test.ini:/usr/local/etc/php/conf-available.d/default-test.ini
       - ./typo3:/var/www/html
     environment:
       typo3DatabaseHost: mariadb
