@@ -35,6 +35,26 @@ services:
         touch ./public/FIRST_INSTALL;
       '
 
+  install-typo3-non-composer:
+    image: typo3/php
+    volumes:
+      - ./typo3:/var/www/html
+    environment:
+      SCRIPT_VERBOSE: 0
+      TYPO3_RELEASE: "10"
+    command: >
+      /bin/sh -c '
+        [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
+        [ -d "public" ] && echo "TYPO3 exists already." && exit;
+        wget -O -  https://get.typo3.org/$${TYPO3_RELEASE} | tar -xzf -;
+        mkdir -p public;
+        chmod 2770 ./public;
+        ln -s typo3_src-* typo3_src;
+        ln -s ../typo3_src/typo3 public/typo3;
+        ln -s ../typo3_src/index.php public/index.php;
+        touch ./public/FIRST_INSTALL;
+      '
+
   purge-typo3-php:
     image: typo3/php
     volumes:
