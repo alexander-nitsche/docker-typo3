@@ -11,7 +11,9 @@ services:
     command: >
       /bin/sh -c '
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
-        git clone --single-branch --branch $${TYPO3_RELEASE} -- https://github.com/TYPO3/TYPO3.CMS.git /var/www/html;
+        mkdir -p public;
+        git clone --single-branch --branch $${TYPO3_RELEASE} -- https://github.com/TYPO3/TYPO3.CMS.git /var/www/html/public;
+        cd public;
         composer install;
         touch ./FIRST_INSTALL;
       '
