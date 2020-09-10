@@ -11,6 +11,7 @@ services:
     command: >
       /bin/sh -c '
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
+        [ -d "public" ] && echo "TYPO3 exists already." && exit;
         mkdir -p public;
         git clone --single-branch --branch $${TYPO3_RELEASE} -- https://github.com/TYPO3/TYPO3.CMS.git /var/www/html/public;
         cd public;
@@ -28,6 +29,7 @@ services:
     command: >
       /bin/sh -c '
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
+        [ -d "public" ] && echo "TYPO3 exists already." && exit;
         composer create-project typo3/cms-base-distribution . ^$${TYPO3_RELEASE};
         chmod 2770 ./public;
         touch ./public/FIRST_INSTALL;
