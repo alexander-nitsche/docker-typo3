@@ -31,5 +31,54 @@ services:
         touch ./public/FIRST_INSTALL;
       '
 
+  purge-typo3-php:
+    image: typo3/php
+    volumes:
+      - ./typo3:/var/www/html
+    environment:
+      SCRIPT_VERBOSE: 0
+    command: >
+      /bin/sh -c '
+        [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
+        rm -rf ./.[^.] ./.??* ./*;
+      '
+
+  purge-typo3-mariadb:
+    image: typo3/mariadb
+    environment:
+      SCRIPT_VERBOSE: 0
+    command: >
+      /bin/sh -c '
+        [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
+        echo Waiting for database start...;
+        while ! mysql -utypo3 -ptypo3 -hmariadb -e "\q"; do
+          sleep 1;
+        done;
+        echo Database is up;
+        mysql -utypo3 -ptypo3 -hmariadb -e "
+          SET FOREIGN_KEY_CHECKS = 0;
+          SET @tables = NULL;
+          SELECT GROUP_CONCAT(\"\`\", table_schema, \"\`.\`\", table_name, \"\`\") INTO @tables
+            FROM information_schema.tables
+            WHERE table_schema = \"typo3\";
+          SET @tables = CONCAT(\"DROP TABLE \", @tables);
+
+          PREPARE stmt FROM @tables;
+          EXECUTE stmt;
+          DEALLOCATE PREPARE stmt;
+          SET FOREIGN_KEY_CHECKS = 1;
+        ";
+      '
+
+  purge-typo3:
+    image: typo3/php
+    depends_on:
+      - purge-typo3-php
+      - purge-typo3-mariadb
+    command: >
+      /bin/sh -c '
+        echo "TYPO3 purged.";
+      '
+
 networks:
   admin:
