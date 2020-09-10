@@ -64,6 +64,7 @@ services:
     command: >
       /bin/sh -c '
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
+        [ ! -d "public" ] && echo "TYPO3 missing. Please install it." && exit;
         cd public;
         php -d memory_limit=768M vendor/phpunit/phpunit/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/UnitTests.xml;
       '
@@ -91,6 +92,7 @@ services:
     command: >
       /bin/sh -c '
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
+        [ ! -d "public" ] && echo "TYPO3 missing. Please install it." && exit;
         echo Waiting for database start...;
         while ! nc -z mariadb 3306; do
           sleep 1;
@@ -122,6 +124,7 @@ services:
     command: >
       /bin/sh -c '
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
+        [ ! -d "public" ] && echo "TYPO3 missing. Please install it." && exit;
         echo Waiting for nginx start...;
         while ! nc -z nginx 80; do
           sleep 1;
