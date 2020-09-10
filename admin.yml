@@ -1,0 +1,20 @@
+version: '3'
+services:
+
+  install-typo3-git:
+    image: typo3/php
+    volumes:
+      - ./typo3:/var/www/html
+    environment:
+      SCRIPT_VERBOSE: 0
+      TYPO3_RELEASE: "10.4"
+    command: >
+      /bin/sh -c '
+        [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
+        git clone --single-branch --branch $${TYPO3_RELEASE} -- https://github.com/TYPO3/TYPO3.CMS.git /var/www/html;
+        composer install;
+        touch ./FIRST_INSTALL;
+      '
+
+networks:
+  admin:
