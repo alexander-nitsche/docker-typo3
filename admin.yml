@@ -16,5 +16,20 @@ services:
         touch ./FIRST_INSTALL;
       '
 
+  install-typo3-composer:
+    image: typo3/php
+    volumes:
+      - ./typo3:/var/www/html
+    environment:
+      SCRIPT_VERBOSE: 0
+      TYPO3_RELEASE: "10"
+    command: >
+      /bin/sh -c '
+        [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
+        composer create-project typo3/cms-base-distribution . ^$${TYPO3_RELEASE};
+        chmod 2770 ./public;
+        touch ./public/FIRST_INSTALL;
+      '
+
 networks:
   admin:
