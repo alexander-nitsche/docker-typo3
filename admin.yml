@@ -103,6 +103,3 @@ services:
       /bin/sh -c '
         echo "TYPO3 purged.";
       '
-
-networks:
-  admin:
