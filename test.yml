@@ -63,8 +63,9 @@ services:
       SCRIPT_VERBOSE: 0
     command: >
       /bin/sh -c '
-        [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x
-        php -d memory_limit=768M vendor/phpunit/phpunit/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/UnitTests.xml
+        [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
+        cd public;
+        php -d memory_limit=768M vendor/phpunit/phpunit/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/UnitTests.xml;
       '
     networks:
       - tests
@@ -89,13 +90,14 @@ services:
       SCRIPT_VERBOSE: 0
     command: >
       /bin/sh -c '
-        [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x
+        [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
         echo Waiting for database start...;
         while ! nc -z mariadb 3306; do
           sleep 1;
         done;
         echo Database is up;
-        php -d memory_limit=4048M vendor/phpunit/phpunit/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTests.xml
+        cd public;
+        php -d memory_limit=4048M vendor/phpunit/phpunit/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTests.xml;
       '
     networks:
       - tests
@@ -119,7 +121,7 @@ services:
       SCRIPT_VERBOSE: 0
     command: >
       /bin/sh -c '
-        [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x
+        [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
         echo Waiting for nginx start...;
         while ! nc -z nginx 80; do
           sleep 1;
@@ -130,7 +132,8 @@ services:
           sleep 1;
         done;
         echo Database is up;
-        ./bin/codecept run Backend -d -c typo3/sysext/core/Tests/codeception.yml --html reports.html
+        cd public;
+        ./bin/codecept run Backend -d -c typo3/sysext/core/Tests/codeception.yml --html reports.html;
       '
     networks:
       - tests
