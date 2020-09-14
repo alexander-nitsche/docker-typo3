@@ -2,22 +2,23 @@ version: '3'
 services:
 
   nginx:
-    image: typo3/nginx
+    image: ${PROJECTNAME}/nginx
     build: ./nginx
     ports:
       - "80:80"
     volumes:
       - ./typo3:/var/www/html
     environment:
-      NGINX_CONTEXT: dev
+      - NGINX_CONTEXT=dev
       # Available levels: debug, info, notice, warn, error, crit, alert, emerg
       # @see https://nginx.org/en/docs/ngx_core_module.html#error_log
-      # NGINX_LOGLEVEL: debug
+      # - NGINX_LOGLEVEL=debug
+      - SERVERNAME
     # Commandline below is required for Nginx log level "debug"
     # command: [ "nginx-debug", "-g", "daemon off;" ]
 
   php:
-    image: typo3/php
+    image: ${PROJECTNAME}/php
     build: ./php
     expose:
       - "9000"
@@ -40,7 +41,7 @@ services:
       TYPO3_CONTEXT: "Development"
 
   mariadb:
-    image: typo3/mariadb
+    image: ${PROJECTNAME}/mariadb
     build: ./mariadb
     ports:
       - "33060:3306"
