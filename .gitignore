@@ -2,3 +2,4 @@
 .idea
 nbproject
 /.env
+/mariadb/data/
