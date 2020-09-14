@@ -2,7 +2,7 @@ version: '3'
 services:
 
   nginx:
-    image: typo3/nginx
+    image: ${PROJECTNAME}/nginx
     depends_on:
       - php
     ports:
@@ -10,17 +10,18 @@ services:
     volumes:
       - ./typo3:/var/www/html
     environment:
-      NGINX_CONTEXT: test
+      - NGINX_CONTEXT=test
       # Available levels: debug, info, notice, warn, error, crit, alert, emerg
       # @see https://nginx.org/en/docs/ngx_core_module.html#error_log
-      # NGINX_LOGLEVEL: debug
+      # - NGINX_LOGLEVEL=debug
+      - SERVERNAME
     networks:
       - tests
     # Commandline below is required for Nginx log level "debug"
     # command: [ "nginx-debug", "-g", "daemon off;" ]
 
   php:
-    image: typo3/php
+    image: ${PROJECTNAME}/php
     volumes:
       - ./php/files/usr/local/etc/php/conf-available.d/default-test.conf:/usr/local/etc/php/conf-available.d/default-test.conf
       - ./php/files/usr/local/etc/php/conf-available.d/default-test.ini:/usr/local/etc/php/conf-available.d/default-test.ini
@@ -38,7 +39,7 @@ services:
       - tests
 
   mariadb:
-    image: typo3/mariadb
+    image: ${PROJECTNAME}/mariadb
     volumes:
       - ./mariadb/files/etc/mysql/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf
       - db-test:/var/lib/mysql
@@ -54,7 +55,7 @@ services:
       - tests
 
   run-typo3-unit-tests:
-    image: typo3/php
+    image: ${PROJECTNAME}/php
     volumes:
       - ./php/files/usr/local/etc/php/conf-available.d/default-test.conf:/usr/local/etc/php/conf-available.d/default-test.conf
       - ./php/files/usr/local/etc/php/conf-available.d/default-test.ini:/usr/local/etc/php/conf-available.d/default-test.ini
@@ -72,7 +73,7 @@ services:
       - tests
 
   run-typo3-functional-tests:
-    image: typo3/php
+    image: ${PROJECTNAME}/php
     depends_on:
       - mariadb
     volumes:
@@ -105,7 +106,7 @@ services:
       - tests
 
   run-typo3-acceptance-tests:
-    image: typo3/php
+    image: ${PROJECTNAME}/php
     depends_on:
       - nginx
       - mariadb

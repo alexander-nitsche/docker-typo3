@@ -3,7 +3,6 @@ set -eo pipefail
 
 docker_resolve_env() {
     local config_dir="/etc/nginx"
-    local config_dir_exclude="/etc/nginx/conf-available.d"
     local suffix=".conf"
     local config
 
@@ -18,8 +17,11 @@ docker_resolve_env() {
     cp "$config_dir/conf-available.d/default-${NGINX_CONTEXT}.conf" "$config_dir/conf.d/default.conf"
 
     # Nginx: Variable substitutions in configuration
-    find "$config_dir" -path "$config_dir_exclude" -prune -o -follow -type f -name "*$suffix" -print | while read -r config_file; do
+    find "$config_dir" -name "nginx.conf" -or -path "$config_dir/conf.d/*" -type f -name "*$suffix" | while read -r config_file; do
         config=$(cat "$config_file")
+        if [[ -n "${SERVERNAME}" ]]; then
+            config=$(echo "$config" | sed -e "/server_name/s/[a-z]\+;$/${SERVERNAME};/g")
+        fi
         if [[ -n "${NGINX_LOGLEVEL}" ]]; then
             config=$(echo "$config" | sed -e "/error_log/s/[a-z]\+;$/${NGINX_LOGLEVEL};/g")
         fi

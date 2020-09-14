@@ -2,7 +2,7 @@ version: '3'
 services:
 
   install-typo3-git:
-    image: typo3/php
+    image: ${PROJECTNAME}/php
     volumes:
       - ./typo3:/var/www/html
     environment:
@@ -20,7 +20,7 @@ services:
       '
 
   install-typo3-composer:
-    image: typo3/php
+    image: ${PROJECTNAME}/php
     volumes:
       - ./typo3:/var/www/html
     environment:
@@ -36,7 +36,7 @@ services:
       '
 
   install-typo3-non-composer:
-    image: typo3/php
+    image: ${PROJECTNAME}/php
     volumes:
       - ./typo3:/var/www/html
     environment:
@@ -56,7 +56,7 @@ services:
       '
 
   purge-typo3-php:
-    image: typo3/php
+    image: ${PROJECTNAME}/php
     volumes:
       - ./typo3:/var/www/html
     environment:
@@ -68,7 +68,7 @@ services:
       '
 
   purge-typo3-mariadb:
-    image: typo3/mariadb
+    image: ${PROJECTNAME}/mariadb
     environment:
       SCRIPT_VERBOSE: 0
     command: >
@@ -95,7 +95,7 @@ services:
       '
 
   purge-typo3:
-    image: typo3/php
+    image: ${PROJECTNAME}/php
     depends_on:
       - purge-typo3-php
       - purge-typo3-mariadb
