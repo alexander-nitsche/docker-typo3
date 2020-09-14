@@ -47,7 +47,7 @@ services:
       - "33060:3306"
     volumes:
       - ./mariadb/files/etc/mysql/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf
-      - db:/var/lib/mysql
+      - ./mariadb/data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: geheim
       MYSQL_DATABASE: typo3
