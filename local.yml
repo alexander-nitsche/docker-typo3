@@ -32,12 +32,6 @@ services:
       # Available levels: alert, error, warning, notice, debug
       # @see https://www.php.net/manual/en/install.fpm.configuration.php
       # PHP_LOGLEVEL: debug
-      TYPO3_INSTALL_DB_DRIVER: mysqli
-      TYPO3_INSTALL_DB_HOST: mariadb
-      TYPO3_INSTALL_DB_USER: typo3
-      TYPO3_INSTALL_DB_PASSWORD: typo3
-      TYPO3_INSTALL_DB_DBNAME: typo3
-      TYPO3_INSTALL_DB_PORT: 3306
       TYPO3_CONTEXT: "Development"
 
   mariadb:

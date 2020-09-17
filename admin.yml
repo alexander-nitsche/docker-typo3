@@ -26,13 +26,28 @@ services:
     environment:
       SCRIPT_VERBOSE: 0
       TYPO3_RELEASE: "10"
+      TYPO3_INSTALL_DB_DRIVER: mysqli
+      TYPO3_INSTALL_DB_USER: typo3
+      TYPO3_INSTALL_DB_PASSWORD: typo3
+      TYPO3_INSTALL_DB_HOST: mariadb
+      TYPO3_INSTALL_DB_PORT: 3306
+      TYPO3_INSTALL_DB_UNIX_SOCKET: ''
+      TYPO3_INSTALL_DB_USE_EXISTING: 1
+      TYPO3_INSTALL_DB_DBNAME: typo3
+      TYPO3_INSTALL_SITE_SETUP_TYPE: "no"
+      TYPO3_INSTALL_WEB_SERVER_CONFIG: "no"
     command: >
       /bin/sh -c '
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
-        [ -d "public" ] && echo "TYPO3 exists already." && exit;
-        composer create-project typo3/cms-base-distribution . ^$${TYPO3_RELEASE};
+        if [ ! -f "composer.json" ]; then
+          composer create-project typo3/cms-base-distribution . ^$${TYPO3_RELEASE};
+        else
+          composer install;
+        fi;
         chmod 2770 ./public;
-        touch ./public/FIRST_INSTALL;
+        if [ ! -f "public/typo3conf/LocalConfiguration.php" ]; then
+          ./vendor/bin/typo3cms install:setup
+        fi;
       '
 
   install-typo3-non-composer:
