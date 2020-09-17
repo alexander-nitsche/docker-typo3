@@ -1,24 +1,6 @@
 version: '3'
 services:
 
-  install-typo3-git:
-    image: ${PROJECTNAME}/php
-    volumes:
-      - ./typo3:/var/www/html
-    environment:
-      SCRIPT_VERBOSE: 0
-      TYPO3_RELEASE: "10.4"
-    command: >
-      /bin/sh -c '
-        [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
-        [ -d "public" ] && echo "TYPO3 exists already." && exit;
-        mkdir -p public;
-        git clone --single-branch --branch $${TYPO3_RELEASE} -- https://github.com/TYPO3/TYPO3.CMS.git /var/www/html/public;
-        cd public;
-        composer install;
-        touch ./FIRST_INSTALL;
-      '
-
   install-typo3-composer:
     image: ${PROJECTNAME}/php
     volumes:
@@ -48,6 +30,24 @@ services:
         if [ ! -f "public/typo3conf/LocalConfiguration.php" ]; then
           ./vendor/bin/typo3cms install:setup
         fi;
+      '
+
+  install-typo3-git:
+    image: ${PROJECTNAME}/php
+    volumes:
+      - ./typo3:/var/www/html
+    environment:
+      SCRIPT_VERBOSE: 0
+      TYPO3_RELEASE: "10.4"
+    command: >
+      /bin/sh -c '
+        [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
+        [ -d "public" ] && echo "TYPO3 exists already." && exit;
+        mkdir -p public;
+        git clone --single-branch --branch $${TYPO3_RELEASE} -- https://github.com/TYPO3/TYPO3.CMS.git /var/www/html/public;
+        cd public;
+        composer install;
+        touch ./FIRST_INSTALL;
       '
 
   install-typo3-non-composer:
