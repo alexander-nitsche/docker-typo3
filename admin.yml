@@ -38,13 +38,13 @@ services:
       - ./typo3:/var/www/html
     environment:
       SCRIPT_VERBOSE: 0
-      TYPO3_RELEASE: "10.4"
+      TYPO3_RELEASE: "master"
     command: >
       /bin/sh -c '
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
         [ -d "public" ] && echo "TYPO3 exists already." && exit;
         mkdir -p public;
-        git clone --single-branch --branch $${TYPO3_RELEASE} -- https://github.com/TYPO3/TYPO3.CMS.git /var/www/html/public;
+        git clone --branch $${TYPO3_RELEASE} -- git://git.typo3.org/Packages/TYPO3.CMS.git /var/www/html/public;
         cd public;
         composer install;
         touch ./FIRST_INSTALL;
