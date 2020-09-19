@@ -62,12 +62,13 @@ services:
       - ./typo3:/var/www/html
     environment:
       SCRIPT_VERBOSE: 0
+      PHPUNIT_FLAGS: ""
     command: >
       /bin/sh -c '
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
         [ ! -d "public" ] && echo "TYPO3 missing. Please install it." && exit;
         cd public;
-        php -d memory_limit=768M vendor/phpunit/phpunit/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/UnitTests.xml;
+        php -d memory_limit=768M vendor/phpunit/phpunit/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/UnitTests.xml $${PHPUNIT_FLAGS};
       '
     networks:
       - tests
@@ -90,6 +91,7 @@ services:
       # @see typo3/typo3/sysext/core/Classes/Authentication/BackendUserAuthentication.php::fetchGroups()
       HTTP_HOST: localhost
       SCRIPT_VERBOSE: 0
+      PHPUNIT_FLAGS: ""
     command: >
       /bin/sh -c '
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
@@ -100,7 +102,7 @@ services:
         done;
         echo Database is up;
         cd public;
-        php -d memory_limit=4048M vendor/phpunit/phpunit/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTests.xml;
+        php -d memory_limit=4048M vendor/phpunit/phpunit/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTests.xml $${PHPUNIT_FLAGS};
       '
     networks:
       - tests
