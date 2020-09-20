@@ -61,6 +61,7 @@ services:
       - ./php/files/usr/local/etc/php/conf-available.d/default-test.ini:/usr/local/etc/php/conf-available.d/default-test.ini
       - ./typo3:/var/www/html
     environment:
+      PHP_CONTEXT: test
       SCRIPT_VERBOSE: 0
       PHPUNIT_FLAGS: ""
     command: >
@@ -90,6 +91,7 @@ services:
       # if HTTP_HOST is null in the backend user authentication
       # @see typo3/typo3/sysext/core/Classes/Authentication/BackendUserAuthentication.php::fetchGroups()
       HTTP_HOST: localhost
+      PHP_CONTEXT: test
       SCRIPT_VERBOSE: 0
       PHPUNIT_FLAGS: ""
     command: >
@@ -123,6 +125,7 @@ services:
       typo3DatabasePassword: geheim
       typo3DatabaseName: typo3_test
       typo3TestingAcceptanceBaseUrl: http://nginx:80
+      PHP_CONTEXT: test
       SCRIPT_VERBOSE: 0
     command: >
       /bin/sh -c '
