@@ -22,8 +22,6 @@ services:
   php-test:
     image: ${PROJECTNAME}/php
     volumes:
-      - ./php/files/usr/local/etc/php/conf-available.d/default-test.conf:/usr/local/etc/php/conf-available.d/default-test.conf
-      - ./php/files/usr/local/etc/php/conf-available.d/default-test.ini:/usr/local/etc/php/conf-available.d/default-test.ini
       - ./typo3:/var/www/html
     environment:
       PHP_CONTEXT: test
@@ -40,7 +38,6 @@ services:
   mariadb-test:
     image: ${PROJECTNAME}/mariadb
     volumes:
-      - ./mariadb/files/etc/mysql/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf
       - db-test:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: geheim
@@ -56,8 +53,6 @@ services:
   run-typo3-unit-tests:
     image: ${PROJECTNAME}/php
     volumes:
-      - ./php/files/usr/local/etc/php/conf-available.d/default-test.conf:/usr/local/etc/php/conf-available.d/default-test.conf
-      - ./php/files/usr/local/etc/php/conf-available.d/default-test.ini:/usr/local/etc/php/conf-available.d/default-test.ini
       - ./typo3:/var/www/html
     environment:
       PHP_CONTEXT: test
@@ -78,8 +73,6 @@ services:
     depends_on:
       - mariadb-test
     volumes:
-      - ./php/files/usr/local/etc/php/conf-available.d/default-test.conf:/usr/local/etc/php/conf-available.d/default-test.conf
-      - ./php/files/usr/local/etc/php/conf-available.d/default-test.ini:/usr/local/etc/php/conf-available.d/default-test.ini
       - ./typo3:/var/www/html
     environment:
       typo3DatabaseHost: mariadb-test
@@ -115,8 +108,6 @@ services:
       - mariadb-test
       - chrome
     volumes:
-      - ./php/files/usr/local/etc/php/conf-available.d/default-test.conf:/usr/local/etc/php/conf-available.d/default-test.conf
-      - ./php/files/usr/local/etc/php/conf-available.d/default-test.ini:/usr/local/etc/php/conf-available.d/default-test.ini
       - ./typo3:/var/www/html
     environment:
       typo3DatabaseHost: mariadb-test
