@@ -9,8 +9,11 @@ make build
 # Start Docker services
 make start
 
-# Install TYPO3 in Composer mode
+# Install TYPO3 in Composer mode ..
 make install
+
+# .. or in Git mode
+make install-git
 ```
 
 ## Debugging Nginx

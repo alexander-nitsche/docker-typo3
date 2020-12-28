@@ -3,7 +3,7 @@ SHELL := /bin/bash
 -include .env
 BRANCH ?= $$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
 
-.PHONY: check build install start stop
+.PHONY: check build install install-git start stop
 
 check:
 	@if [ ! -f ".env" ]; then \
@@ -15,12 +15,16 @@ build: check
 	@docker-compose -f dev.yml build --force-rm
 
 install: check
-	@echo "Install TYPO3 in project $(PROJECTNAME)"
-	@mkdir -p typo3
+	@echo "Install TYPO3 in Composer mode in project $(PROJECTNAME)"
 	@docker-compose -f admin.yml run --rm install-typo3-composer
+
+install-git: check
+	@echo "Install TYPO3 in Git mode in project $(PROJECTNAME)"
+	@docker-compose -f admin.yml run --rm install-typo3-git
 
 start: check
 	@echo "Bring up TYPO3 project $(PROJECTNAME) [branch: $(BRANCH)]"
+	@mkdir -p typo3
 	@docker-compose -f dev.yml up
 
 stop:
