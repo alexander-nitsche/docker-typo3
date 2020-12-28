@@ -1,3 +1,18 @@
+## Installation
+```
+# Copy and adapt
+cp .env-template .env
+
+# Build Docker images
+make build
+
+# Start Docker services
+make start
+
+# Install TYPO3 in Composer mode
+make install
+```
+
 ## Debugging Nginx
 In order to enable logging at debug level you will have to uncomment the following
 lines at the Docker Compose file, e.g. [dev.yml](dev.yml)
