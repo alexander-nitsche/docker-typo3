@@ -1,10 +1,10 @@
 version: '3'
 services:
 
-  nginx:
+  nginx-test:
     image: ${PROJECTNAME}/nginx
     depends_on:
-      - php
+      - php-test
     ports:
       - "80:80"
     volumes:
@@ -14,13 +14,12 @@ services:
       # Available levels: debug, info, notice, warn, error, crit, alert, emerg
       # @see https://nginx.org/en/docs/ngx_core_module.html#error_log
       # - NGINX_LOGLEVEL=debug
-      - SERVERNAME
     networks:
-      - tests
+      - test
     # Commandline below is required for Nginx log level "debug"
     # command: [ "nginx-debug", "-g", "daemon off;" ]
 
-  php:
+  php-test:
     image: ${PROJECTNAME}/php
     volumes:
       - ./php/files/usr/local/etc/php/conf-available.d/default-test.conf:/usr/local/etc/php/conf-available.d/default-test.conf
@@ -31,14 +30,14 @@ services:
       # Available levels: alert, error, warning, notice, debug
       # @see https://www.php.net/manual/en/install.fpm.configuration.php
       # PHP_LOGLEVEL: debug
-      typo3DatabaseHost: mariadb
+      typo3DatabaseHost: mariadb-test
       typo3DatabaseUsername: root
       typo3DatabasePassword: geheim
       typo3DatabaseName: typo3_test
     networks:
-      - tests
+      - test
 
-  mariadb:
+  mariadb-test:
     image: ${PROJECTNAME}/mariadb
     volumes:
       - ./mariadb/files/etc/mysql/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf
@@ -47,12 +46,12 @@ services:
       MYSQL_ROOT_PASSWORD: geheim
     command: [ "mysqld", "--character-set-server", "utf8mb4", "--collation-server", "utf8mb4_unicode_ci" ]
     networks:
-      - tests
+      - test
 
   chrome:
     image: selenium/standalone-chrome:3.12
     networks:
-      - tests
+      - test
 
   run-typo3-unit-tests:
     image: ${PROJECTNAME}/php
@@ -72,18 +71,18 @@ services:
         php -d memory_limit=768M vendor/phpunit/phpunit/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/UnitTests.xml $${PHPUNIT_FLAGS};
       '
     networks:
-      - tests
+      - test
 
   run-typo3-functional-tests:
     image: ${PROJECTNAME}/php
     depends_on:
-      - mariadb
+      - mariadb-test
     volumes:
       - ./php/files/usr/local/etc/php/conf-available.d/default-test.conf:/usr/local/etc/php/conf-available.d/default-test.conf
       - ./php/files/usr/local/etc/php/conf-available.d/default-test.ini:/usr/local/etc/php/conf-available.d/default-test.ini
       - ./typo3:/var/www/html
     environment:
-      typo3DatabaseHost: mariadb
+      typo3DatabaseHost: mariadb-test
       typo3DatabaseUsername: root
       typo3DatabasePassword: geheim
       typo3DatabaseName: typo3_test
@@ -99,7 +98,7 @@ services:
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
         [ ! -d "public" ] && echo "TYPO3 missing. Please install it." && exit;
         echo Waiting for database start...;
-        while ! nc -z mariadb 3306; do
+        while ! nc -z mariadb-test 3306; do
           sleep 1;
         done;
         echo Database is up;
@@ -107,24 +106,24 @@ services:
         php -d memory_limit=4048M vendor/phpunit/phpunit/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTests.xml $${PHPUNIT_FLAGS};
       '
     networks:
-      - tests
+      - test
 
   run-typo3-acceptance-tests:
     image: ${PROJECTNAME}/php
     depends_on:
-      - nginx
-      - mariadb
+      - nginx-test
+      - mariadb-test
       - chrome
     volumes:
       - ./php/files/usr/local/etc/php/conf-available.d/default-test.conf:/usr/local/etc/php/conf-available.d/default-test.conf
       - ./php/files/usr/local/etc/php/conf-available.d/default-test.ini:/usr/local/etc/php/conf-available.d/default-test.ini
       - ./typo3:/var/www/html
     environment:
-      typo3DatabaseHost: mariadb
+      typo3DatabaseHost: mariadb-test
       typo3DatabaseUsername: root
       typo3DatabasePassword: geheim
       typo3DatabaseName: typo3_test
-      typo3TestingAcceptanceBaseUrl: http://nginx:80
+      typo3TestingAcceptanceBaseUrl: http://nginx-test:80
       PHP_CONTEXT: test
       SCRIPT_VERBOSE: 0
       CODECEPT_FLAGS: "-c typo3/sysext/core/Tests/codeception.yml -- Backend"
@@ -133,12 +132,12 @@ services:
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
         [ ! -d "public" ] && echo "TYPO3 missing. Please install it." && exit;
         echo Waiting for nginx start...;
-        while ! nc -z nginx 80; do
+        while ! nc -z nginx-test 80; do
           sleep 1;
         done;
         echo Nginx is up;
         echo Waiting for database start...;
-        while ! nc -z mariadb 3306; do
+        while ! nc -z mariadb-test 3306; do
           sleep 1;
         done;
         echo Database is up;
@@ -146,10 +145,10 @@ services:
         ./bin/codecept run -d --html reports.html $${CODECEPT_FLAGS};
       '
     networks:
-      - tests
+      - test
 
 volumes:
   db-test:
 
 networks:
-  tests:
+  test:

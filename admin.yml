@@ -11,7 +11,7 @@ services:
       TYPO3_INSTALL_DB_DRIVER: mysqli
       TYPO3_INSTALL_DB_USER: typo3
       TYPO3_INSTALL_DB_PASSWORD: typo3
-      TYPO3_INSTALL_DB_HOST: mariadb
+      TYPO3_INSTALL_DB_HOST: mariadb-dev
       TYPO3_INSTALL_DB_PORT: 3306
       TYPO3_INSTALL_DB_UNIX_SOCKET: ''
       TYPO3_INSTALL_DB_USE_EXISTING: 1
@@ -31,6 +31,8 @@ services:
           ./vendor/bin/typo3cms install:setup
         fi;
       '
+    networks:
+      - dev
 
   install-typo3-git:
     image: ${PROJECTNAME}/php
@@ -49,6 +51,8 @@ services:
         composer install;
         touch ./FIRST_INSTALL;
       '
+    networks:
+      - dev
 
   install-typo3-non-composer:
     image: ${PROJECTNAME}/php
@@ -69,6 +73,8 @@ services:
         ln -s ../typo3_src/index.php public/index.php;
         touch ./public/FIRST_INSTALL;
       '
+    networks:
+      - dev
 
   purge-typo3-php:
     image: ${PROJECTNAME}/php
@@ -81,6 +87,8 @@ services:
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
         rm -rf ./.[^.] ./.??* ./*;
       '
+    networks:
+      - dev
 
   purge-typo3-mariadb:
     image: ${PROJECTNAME}/mariadb
@@ -90,11 +98,11 @@ services:
       /bin/sh -c '
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
         echo Waiting for database start...;
-        while ! mysql -utypo3 -ptypo3 -hmariadb -e "\q"; do
+        while ! mysql -utypo3 -ptypo3 -hmariadb-dev -e "\q"; do
           sleep 1;
         done;
         echo Database is up;
-        mysql -utypo3 -ptypo3 -hmariadb -e "
+        mysql -utypo3 -ptypo3 -hmariadb-dev -e "
           SET FOREIGN_KEY_CHECKS = 0;
           SET @tables = NULL;
           SELECT GROUP_CONCAT(\"\`\", table_schema, \"\`.\`\", table_name, \"\`\") INTO @tables
@@ -108,6 +116,8 @@ services:
           SET FOREIGN_KEY_CHECKS = 1;
         ";
       '
+    networks:
+      - dev
 
   purge-typo3:
     image: ${PROJECTNAME}/php
@@ -118,3 +128,8 @@ services:
       /bin/sh -c '
         echo "TYPO3 purged.";
       '
+    networks:
+      - dev
+
+networks:
+  dev:

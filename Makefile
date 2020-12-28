@@ -12,7 +12,7 @@ check:
 
 build: check
 	@echo "Build TYPO3 Docker images for project $(PROJECTNAME) [branch: $(BRANCH)]"
-	@docker-compose -f local.yml build --force-rm
+	@docker-compose -f dev.yml build --force-rm
 
 install: check
 	@echo "Install TYPO3 in project $(PROJECTNAME)"
@@ -21,8 +21,8 @@ install: check
 
 start: check
 	@echo "Bring up TYPO3 project $(PROJECTNAME) [branch: $(BRANCH)]"
-	@docker-compose -f local.yml up
+	@docker-compose -f dev.yml up
 
 stop:
 	@echo "Bring down TYPO3 project $(PROJECTNAME)"
-	@docker-compose -f local.yml down
+	@docker-compose -f dev.yml down

@@ -1,7 +1,7 @@
 version: '3'
 services:
 
-  nginx:
+  nginx-dev:
     image: ${PROJECTNAME}/nginx
     build: ./nginx
     ports:
@@ -16,8 +16,10 @@ services:
       - SERVERNAME
     # Commandline below is required for Nginx log level "debug"
     # command: [ "nginx-debug", "-g", "daemon off;" ]
+    networks:
+      - dev
 
-  php:
+  php-dev:
     image: ${PROJECTNAME}/php
     build: ./php
     expose:
@@ -33,8 +35,10 @@ services:
       # @see https://www.php.net/manual/en/install.fpm.configuration.php
       # PHP_LOGLEVEL: debug
       TYPO3_CONTEXT: "Development"
+    networks:
+      - dev
 
-  mariadb:
+  mariadb-dev:
     image: ${PROJECTNAME}/mariadb
     build: ./mariadb
     ports:
@@ -48,7 +52,8 @@ services:
       MYSQL_USER: typo3
       MYSQL_PASSWORD: typo3
     command: [ "mysqld", "--character-set-server", "utf8mb4", "--collation-server", "utf8mb4_unicode_ci" ]
+    networks:
+      - dev
 
-volumes:
-#  vendor:
-  db:
+networks:
+  dev:
