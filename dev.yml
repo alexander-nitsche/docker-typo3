@@ -22,8 +22,6 @@ services:
   php-dev:
     image: ${PROJECTNAME}/php
     build: ./php
-    expose:
-      - "9000"
     volumes:
       - ./typo3:/var/www/html
 #      - vendor:/var/www/html/vendor

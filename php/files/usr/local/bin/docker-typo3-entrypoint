@@ -21,6 +21,7 @@ docker_resolve_env() {
     fi
     cp "$config_tmpl_dir/default-${PHP_CONTEXT}.ini" "$config_php_dir/conf.d/default.ini"
     cp "$config_tmpl_dir/default-${PHP_CONTEXT}.conf" "$config_phpfpm_dir/default.conf"
+    cp "$config_tmpl_dir/zzz-default-${PHP_CONTEXT}.conf" "$config_phpfpm_dir/zzz-default.conf"
 
     # PHP: Variable substitutions in configuration
     find "$config_phpfpm_dir" -follow -type f -name "*$suffix_phpfpm" -print | while read -r config_file; do
