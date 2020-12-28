@@ -1,6 +1,6 @@
 ## Debugging Nginx
 In order to enable logging at debug level you will have to uncomment the following
-lines at the Docker Compose file, e.g. [local.yml](local.yml)
+lines at the Docker Compose file, e.g. [dev.yml](dev.yml)
 ```yaml
 # NGINX_LOGLEVEL: debug
 # command: [ "nginx-debug", "-g", "daemon off;" ]
