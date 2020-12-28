@@ -27,7 +27,8 @@ RUN chmod uga+x /usr/local/bin/install-php-extensions && sync && install-php-ext
         zip \
         intl \
         gmagick \
-        xdebug
+        # Downgrade to XDebug v2 to handle PHP 7.3 + XDebug v3 + Symfony package exceptions
+        xdebug-2.9.8
 
 RUN curl -sS https://getcomposer.org/installer \
     | php -- --install-dir=/usr/bin --filename=composer
