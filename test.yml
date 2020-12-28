@@ -127,6 +127,7 @@ services:
       typo3TestingAcceptanceBaseUrl: http://nginx:80
       PHP_CONTEXT: test
       SCRIPT_VERBOSE: 0
+      CODECEPT_FLAGS: "-c typo3/sysext/core/Tests/codeception.yml -- Backend"
     command: >
       /bin/sh -c '
         [ "$${SCRIPT_VERBOSE}" -eq "1" ] && set -x;
@@ -142,7 +143,7 @@ services:
         done;
         echo Database is up;
         cd public;
-        ./bin/codecept run Backend -d -c typo3/sysext/core/Tests/codeception.yml --html reports.html;
+        ./bin/codecept run -d --html reports.html $${CODECEPT_FLAGS};
       '
     networks:
       - tests
