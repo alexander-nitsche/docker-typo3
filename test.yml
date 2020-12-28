@@ -5,8 +5,6 @@ services:
     image: ${PROJECTNAME}/nginx
     depends_on:
       - php-test
-    ports:
-      - "80:80"
     volumes:
       - ./typo3:/var/www/html
     environment:
