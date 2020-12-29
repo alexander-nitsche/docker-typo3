@@ -16,6 +16,28 @@ make install
 make install-git
 ```
 
+## Testing
+```bash
+# TYPO3 Core unit tests
+docker-compose -f test.yml run --rm run-typo3-unit-tests
+# Subset
+docker-compose -f test.yml run --rm -e PHPUNIT_FLAGS="--filter Adminpanel" run-typo3-unit-tests
+# Xdebug on port 9001, check section "Debugging PHP" for preparation
+docker-compose -f test.yml run --rm -e XDEBUG_CONFIG="idekey=PHPSTORM" -e PHP_IDE_CONFIG="serverName=localhost" -e PHPUNIT_FLAGS="--filter Dashboard" run-typo3-unit-tests
+
+# TYPO3 Core functional tests
+docker-compose -f test.yml run --rm run-typo3-functional-tests
+# Subset
+docker-compose -f test.yml run --rm -e PHPUNIT_FLAGS="--filter Backend" run-typo3-functional-tests
+# Xdebug on port 9001, check section "Debugging PHP" for preparation
+docker-compose -f test.yml run --rm -e XDEBUG_CONFIG="idekey=PHPSTORM" -e PHP_IDE_CONFIG="serverName=localhost" -e PHPUNIT_FLAGS="--filter Extbase" run-typo3-functional-tests
+
+# TYPO3 Core acceptance tests
+docker-compose -f test.yml run --rm run-typo3-acceptance-tests
+# Subset
+docker-compose -f test.yml run --rm -e CODECEPT_FLAGS="-c typo3/sysext/core/Tests/codeception.yml -- PageTree" run-typo3-acceptance-tests
+```
+
 ## Debugging Nginx
 In order to enable logging at debug level you will have to uncomment the following
 lines at the Docker Compose file, e.g. [dev.yml](dev.yml)
